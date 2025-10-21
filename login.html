@@ -14,7 +14,7 @@
 
     /* NAVBAR */
     .navbar {
-      background-color: #ffb347; /* orange */
+      background-color: #ffb347;
       color: white;
       padding: 10px 20px;
       display: flex;
@@ -43,19 +43,22 @@
       text-decoration: underline;
     }
 
-    /* MAIN AREA */
+    /* CONTAINER */
     .container {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
       height: calc(100vh - 60px);
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     .box {
       background-color: white;
-      width: 220px;
-      height: 150px;
+      flex: 1 1 220px;
+      max-width: 250px;
+      height: 160px;
       margin: 12px;
       display: flex;
       flex-direction: column;
@@ -77,6 +80,27 @@
       display: none;
     }
 
+    /* LOGIN AREA */
+    .login-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .login-box {
+      background-color: white;
+      padding: 25px;
+      border-radius: 15px;
+      border: 3px solid #ffb347;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 300px;
+    }
+
     input {
       padding: 8px;
       width: 220px;
@@ -85,7 +109,7 @@
       border-radius: 5px;
     }
 
-    button.login-btn {
+    button.login-btn, .back-btn {
       padding: 8px 16px;
       background-color: #ffa500;
       color: white;
@@ -96,19 +120,33 @@
       transition: 0.2s;
     }
 
-    button.login-btn:hover {
+    button.login-btn:hover, .back-btn:hover {
       background-color: #ff8c00;
+    }
+
+    .alt-box {
+      background-color: white;
+      width: 200px;
+      height: 150px;
+      border: 3px solid #ffb347;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
     h2 {
       color: #333;
+      text-align: center;
     }
 
   </style>
 </head>
 <body>
 
-  <!-- NAVIGATION BAR -->
+  <!-- NAVBAR -->
   <div class="navbar">
     <div class="navbar-left">MyWeb</div>
     <div class="navbar-right">
@@ -118,7 +156,7 @@
     </div>
   </div>
 
-  <!-- DEFAULT AREA -->
+  <!-- MAIN AREA -->
   <div class="container" id="mainArea">
     <div class="box" onclick="goToAA('Student')">
       <h2>Student</h2>
@@ -139,38 +177,108 @@
     <div class="box" onclick="goToAA('Admin')">
       <h2>Admin</h2>
     </div>
+    <button class="back-btn" onclick="goBack('BA')">Back</button>
   </div>
 
-  <!-- AREA AA (LOGIN FORM) -->
+  <!-- AREA AA (LOGIN FORMS) -->
   <div class="container hidden" id="areaAA">
-    <h2 id="loginTitle">Login</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button class="login-btn" onclick="login()">Login</button>
+    <div class="login-container" id="loginSection">
+      <!-- dynamic login form inserted here -->
+    </div>
+    <button class="back-btn" onclick="goBack('AA')">Back</button>
   </div>
 
   <script>
-    function goToAA(role) {
-      document.getElementById("mainArea").classList.add("hidden");
-      document.getElementById("areaBA").classList.add("hidden");
-      document.getElementById("areaAA").classList.remove("hidden");
-      document.getElementById("loginTitle").innerText = role + " Login";
-    }
+    let currentArea = 'main';
 
     function goToBA() {
       document.getElementById("mainArea").classList.add("hidden");
       document.getElementById("areaBA").classList.remove("hidden");
+      currentArea = 'BA';
     }
 
-    function login() {
-      let user = document.getElementById("username").value;
-      let pass = document.getElementById("password").value;
+    function goToAA(role) {
+      document.getElementById("mainArea").classList.add("hidden");
+      document.getElementById("areaBA").classList.add("hidden");
+      document.getElementById("areaAA").classList.remove("hidden");
 
-      if (user === "" || pass === "") {
-        alert("Please fill out all fields.");
-      } else {
-        alert("Login successful for: " + user);
+      const section = document.getElementById("loginSection");
+      section.innerHTML = ''; // clear previous form
+
+      // create main login box
+      const loginBox = document.createElement("div");
+      loginBox.classList.add("login-box");
+      const title = document.createElement("h2");
+      title.textContent = role + " Login";
+      loginBox.appendChild(title);
+
+      // dynamic fields based on role
+      if (role === "Student") {
+        loginBox.innerHTML += `
+          <input type="text" id="username" placeholder="Username">
+          <input type="password" id="password" placeholder="Password">
+          <button class="login-btn" onclick="login('${role}')">Login</button>
+        `;
+
+        const alt = document.createElement("div");
+        alt.classList.add("alt-box");
+        alt.textContent = "No Login: Library Log";
+        section.appendChild(loginBox);
+        section.appendChild(alt);
+
+      } else if (role === "Teacher") {
+        loginBox.innerHTML += `
+          <input type="text" id="username" placeholder="Username">
+          <input type="password" id="password" placeholder="Password">
+          <input type="text" id="subject" placeholder="Subject Code">
+          <button class="login-btn" onclick="login('${role}')">Login</button>
+        `;
+        section.appendChild(loginBox);
+
+      } else if (role === "Librarian") {
+        loginBox.innerHTML += `
+          <input type="text" id="username" placeholder="Username">
+          <input type="password" id="password" placeholder="Password">
+          <input type="text" id="idnumber" placeholder="Staff ID">
+          <button class="login-btn" onclick="login('${role}')">Login</button>
+        `;
+        section.appendChild(loginBox);
+
+      } else if (role === "Admin") {
+        loginBox.innerHTML += `
+          <input type="text" id="username" placeholder="Username">
+          <input type="password" id="password" placeholder="Password">
+          <input type="text" id="securitykey" placeholder="Security Key">
+          <button class="login-btn" onclick="login('${role}')">Login</button>
+        `;
+        section.appendChild(loginBox);
       }
+
+      currentArea = 'AA';
+    }
+
+    function goBack(from) {
+      if (from === 'AA') {
+        if (currentArea === 'AA') {
+          document.getElementById("areaAA").classList.add("hidden");
+          document.getElementById("mainArea").classList.remove("hidden");
+        }
+      } else if (from === 'BA') {
+        document.getElementById("areaBA").classList.add("hidden");
+        document.getElementById("mainArea").classList.remove("hidden");
+      }
+    }
+
+    function login(role) {
+      const username = document.getElementById("username")?.value || '';
+      const password = document.getElementById("password")?.value || '';
+
+      if (username === '' || password === '') {
+        alert("Please fill out all fields.");
+        return;
+      }
+
+      alert(role + " login successful for: " + username);
     }
   </script>
 
