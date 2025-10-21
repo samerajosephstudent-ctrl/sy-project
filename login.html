@@ -40,7 +40,7 @@
 
     .navbar-right button:hover {
       color: #fff9f0;
-      text-decoration: underline;
+      text-decoration: none;
     }
 
     /* CONTAINER */
@@ -109,7 +109,8 @@
       border-radius: 5px;
     }
 
-    button.login-btn, .back-btn {
+    button#login-btn,
+    .back-btn {
       padding: 8px 16px;
       background-color: #ffa500;
       color: white;
@@ -120,7 +121,8 @@
       transition: 0.2s;
     }
 
-    button.login-btn:hover, .back-btn:hover {
+    button#login-btn:hover,
+    .back-btn:hover {
       background-color: #ff8c00;
     }
 
@@ -141,18 +143,17 @@
       color: #333;
       text-align: center;
     }
-
   </style>
 </head>
 <body>
-
   <!-- NAVBAR -->
   <div class="navbar">
     <div class="navbar-left">MyWeb</div>
     <div class="navbar-right">
       <button>Contact</button>
       <button>Info</button>
-      <button>Home Theme</button>
+      <button>Home</button>
+      <button>Theme</button>
     </div>
   </div>
 
@@ -205,53 +206,78 @@
       const section = document.getElementById("loginSection");
       section.innerHTML = ''; // clear previous form
 
-      // create main login box
       const loginBox = document.createElement("div");
       loginBox.classList.add("login-box");
+
       const title = document.createElement("h2");
       title.textContent = role + " Login";
       loginBox.appendChild(title);
 
-      // dynamic fields based on role
+      // Dynamic fields based on role
       if (role === "Student") {
         loginBox.innerHTML += `
           <input type="text" id="username" placeholder="Username">
           <input type="password" id="password" placeholder="Password">
-          <button class="login-btn" onclick="login('${role}')">Login</button>
+          <button id="login-btn" onclick="login('${role}')">Login</button>
         `;
 
         const alt = document.createElement("div");
         alt.classList.add("alt-box");
         alt.textContent = "No Login: Library Log";
+
         section.appendChild(loginBox);
         section.appendChild(alt);
+
+        document.getElementById("password").addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            document.getElementById("login-btn").click();
+          }
+        });
 
       } else if (role === "Teacher") {
         loginBox.innerHTML += `
           <input type="text" id="username" placeholder="Username">
           <input type="password" id="password" placeholder="Password">
           <input type="text" id="subject" placeholder="Subject Code">
-          <button class="login-btn" onclick="login('${role}')">Login</button>
+          <button id="login-btn" onclick="login('${role}')">Login</button>
         `;
         section.appendChild(loginBox);
+
+        document.getElementById("subject").addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            document.getElementById("login-btn").click();
+          }
+        });
 
       } else if (role === "Librarian") {
         loginBox.innerHTML += `
           <input type="text" id="username" placeholder="Username">
           <input type="password" id="password" placeholder="Password">
           <input type="text" id="idnumber" placeholder="Staff ID">
-          <button class="login-btn" onclick="login('${role}')">Login</button>
+          <button id="login-btn" onclick="login('${role}')">Login</button>
         `;
         section.appendChild(loginBox);
+
+        document.getElementById("idnumber").addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            document.getElementById("login-btn").click();
+          }
+        });
 
       } else if (role === "Admin") {
         loginBox.innerHTML += `
           <input type="text" id="username" placeholder="Username">
           <input type="password" id="password" placeholder="Password">
           <input type="text" id="securitykey" placeholder="Security Key">
-          <button class="login-btn" onclick="login('${role}')">Login</button>
+          <button id="login-btn" onclick="login('${role}')">Login</button>
         `;
         section.appendChild(loginBox);
+
+        document.getElementById("securitykey").addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            document.getElementById("login-btn").click();
+          }
+        });
       }
 
       currentArea = 'AA';
@@ -259,10 +285,8 @@
 
     function goBack(from) {
       if (from === 'AA') {
-        if (currentArea === 'AA') {
-          document.getElementById("areaAA").classList.add("hidden");
-          document.getElementById("mainArea").classList.remove("hidden");
-        }
+        document.getElementById("areaAA").classList.add("hidden");
+        document.getElementById("mainArea").classList.remove("hidden");
       } else if (from === 'BA') {
         document.getElementById("areaBA").classList.add("hidden");
         document.getElementById("mainArea").classList.remove("hidden");
@@ -281,6 +305,5 @@
       alert(role + " login successful for: " + username);
     }
   </script>
-
 </body>
 </html>
