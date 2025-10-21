@@ -1,11 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyWeb Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #fff9f0;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background-color: #ffb347; /* orange */
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-left {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .navbar-right button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      margin-left: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .navbar-right button:hover {
+      color: #fff9f0;
+      text-decoration: underline;
+    }
+
+    /* MAIN AREA */
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 60px);
+    }
+
+    .box {
+      background-color: white;
+      width: 220px;
+      height: 150px;
+      margin: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 15px;
+      border: 3px solid #ffb347;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .box:hover {
+      transform: scale(1.05);
+      background-color: #ffe5b4;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    input {
+      padding: 8px;
+      width: 220px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button.login-btn {
+      padding: 8px 16px;
+      background-color: #ffa500;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    button.login-btn:hover {
+      background-color: #ff8c00;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+  </style>
 </head>
 <body>
-    dfblhwrhio
+
+  <!-- NAVIGATION BAR -->
+  <div class="navbar">
+    <div class="navbar-left">MyWeb</div>
+    <div class="navbar-right">
+      <button>Contact</button>
+      <button>Info</button>
+      <button>Home Theme</button>
+    </div>
+  </div>
+
+  <!-- DEFAULT AREA -->
+  <div class="container" id="mainArea">
+    <div class="box" onclick="goToAA('Student')">
+      <h2>Student</h2>
+    </div>
+    <div class="box" onclick="goToBA()">
+      <h2>Others</h2>
+    </div>
+  </div>
+
+  <!-- AREA BA -->
+  <div class="container hidden" id="areaBA">
+    <div class="box" onclick="goToAA('Teacher')">
+      <h2>Teacher</h2>
+    </div>
+    <div class="box" onclick="goToAA('Librarian')">
+      <h2>Librarian</h2>
+    </div>
+    <div class="box" onclick="goToAA('Admin')">
+      <h2>Admin</h2>
+    </div>
+  </div>
+
+  <!-- AREA AA (LOGIN FORM) -->
+  <div class="container hidden" id="areaAA">
+    <h2 id="loginTitle">Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button class="login-btn" onclick="login()">Login</button>
+  </div>
+
+  <script>
+    function goToAA(role) {
+      document.getElementById("mainArea").classList.add("hidden");
+      document.getElementById("areaBA").classList.add("hidden");
+      document.getElementById("areaAA").classList.remove("hidden");
+      document.getElementById("loginTitle").innerText = role + " Login";
+    }
+
+    function goToBA() {
+      document.getElementById("mainArea").classList.add("hidden");
+      document.getElementById("areaBA").classList.remove("hidden");
+    }
+
+    function login() {
+      let user = document.getElementById("username").value;
+      let pass = document.getElementById("password").value;
+
+      if (user === "" || pass === "") {
+        alert("Please fill out all fields.");
+      } else {
+        alert("Login successful for: " + user);
+      }
+    }
+  </script>
+
 </body>
 </html>
