@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MyWeb Portal</title>
+    <style>
+        body {
+            background-color: #ffb347;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background-color: #fff9f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            box-sizing: border-box;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+        }
+        .loader {
+            border: 8px solid #fff;
+            border-top: 8px solid #3498db;
+            align-self: center;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #cardHolder {
+            background-color: #fff9f0;
+            color: black;
+            border: 3px solid #ffb347;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            height: 50% auto;
+            position: fixed;
+            box-shadow: 0 0 8px rgba(0, 0, 0,0.5);
+            outline: none;
+            text-decoration: none;
+        }
+        #head {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 26px;
+            font-weight: bolder;
+        }
+        #cardAbout {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 20px;
+            height: 0 auto;
+        }
+        #cardGoal {
+            display: none;
+        }
+        #cardCredits {
+            display: none;
+        }
+        #changeButton {
+            font-size: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+        .button {
+            align-self: center;
+            width: 100%;
+            height: 0 auto;
+        }
+        #credit {
+            font-weight: bold;
+        }
+        h1 {
+            width: 100%;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>PHS - Calixto Library</h1>
+    <div class="container">
+        <div id="cardHolder"><br><h2 id="head">About</h2>
+            <div id="cardAbout">This Phs-Calixto Library aims to help students who wants to study and read about knowledges in past history, cultures of the other country, books regarding their future courses that might help them, businesses, religions, english books, etc.
+                <div id="loading">
+                <div class="loader"></div>
+                </div>
+                </div><br>
+            <div id="cardGoal">It helps students who are devoted to study for a better future</div>  
+            <div id="cardCredits"><p id="credit">Web Developer</p><p>Joseph Samera</p><p>Francis Salas</p><p id="credit">Web Designer</p><p>Honney Ocampo</p><p>Jethro Sandoval<p></div>
+            <div class="button">
+            <button id="changeButton" type="submit">»</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+            const divContainer = document.createElement('div');
+            const p1 = document.createElement('p');
+            p1.textContent = 'PHS - Calixto Library';
+            p1.style.fontWeight = 'bold';
+            p1.style.fontSize = '35px';
+            p1.style.color = 'white';
+            divContainer.appendChild(p1);
+            divContainer.style.position = 'fixed';
+            divContainer.style.top = '0';
+            divContainer.style.left = '0';
+            divContainer.style.display = 'flex';
+            divContainer.style.justifyContent = 'center';
+            divContainer.style.alignItems = 'center';
+            divContainer.style.width = '100%';
+            divContainer.style.height = '100vh';
+            divContainer.style.backgroundColor = '#ffb347';
+            divContainer.style.zIndex = '1000';
+            
+            document.body.appendChild(divContainer);
+            setTimeout(function() {
+                divContainer.style.display = 'none';
+            }, 4000);
+        
+    
+        let card = false;
+        const holder = document.getElementById("cardHolder");
+        const head = document.getElementById("head");
+        const about = document.getElementById("cardAbout");
+        const goal = document.getElementById("cardGoal");
+        const credits = document.getElementById("cardCredits");
+        const credit = document.getElementById("credit");
+        const button = document.getElementById("changeButton");
+        const loading = document.getElementById("loading");
+        
+        button.addEventListener('click', function() {
+            if (!card) {
+                head.textContent = 'Goal';
+                about.innerHTML = goal.innerHTML;
+                card = true;
+            }
+            else if (button.textContent === 'Login') {
+                button.textContent = 'Loading...';
+                button.style.width = '130px';
+                about.style.display = 'none';
+                loading.style.display = 'block';
+                /*button.appendChild(loading);*/
+                
+                setTimeout(function() {
+                    loading.style.display = 'none';
+                    window.location.href = 'login.html';
+                }, 4000)
+                
+            }
+            else {
+                head.textContent = 'Credits';
+                about.innerHTML = credits.innerHTML;
+                button.textContent = 'Login';
+                button.style.fontWeight = 'bold';
+                button.style.width = '80px';
+                button.style.fontSize = '25px';
+                card = true;
+            }
+            
+        });
+    </script>
+</body>
+</html>
