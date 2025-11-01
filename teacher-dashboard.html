@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Teacher Dashboard — Simple</title>
+<style>
+  body{font-family: Arial, sans-serif; margin:0; background:#f7f3e6 url('assets/lightbg.jpg') center/cover}
+  .navbar{margin:16px;padding:14px;background:rgba(255,200,0,0.12);border-radius:18px;display:flex;justify-content:space-between}
+  .container{max-width:1000px;margin:18px auto;padding:0 12px;display:grid;gap:14px}
+  .card{background: #fff;padding:12px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+  .btn{background:#f39c12;border:none;color:#fff;padding:8px 10px;border-radius:6px;cursor:pointer}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:8px;border-bottom:1px solid #eee}
+</style>
+</head>
+<body>
+  <div class="navbar"><div class="brand">PHS Calixto — Teacher</div><div>Hi, Teacher</div></div>
+
+  <div class="container">
+    <div class="card">
+      <h3>Reservation Requests</h3>
+      <p style="margin:6px 0 10px 0">Approve or reject requests.</p>
+      <table id="reqTable"><thead><tr><th>Table</th><th>Requester</th><th>Time</th><th>Action</th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="card">
+      <h3>Create Class Reservation</h3>
+      <input id="c_name" placeholder="Class (e.g., 10-A)" />
+      <input id="c_when" type="datetime-local" />
+      <button class="btn" id="createClass">Create</button>
+
+      <h4 style="margin-top:12px">My Class Reservations</h4>
+      <table id="classTable"><thead><tr><th>Class</th><th>When</th><th>Action</th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="card">
+      <h3>Attendance Log</h3>
+      <p style="margin:6px 0">You can mark a whole class present (demo).</p>
+      <select id="chooseClass"></select>
+      <button class="btn" id="markClass">Mark All Present</button>
+
+      <table id="attLog"><thead><tr><th>Student</th><th>Time</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+<script>
+  // simple arrays
+  var requests = []; // {table, requester, time}
+  var classes = []; // {name, when}
+  var attendance = []; // {student, ts}
+
+  // demo: add some initial requests
+  requests.push({table:'Table A', requester:'S1001', time: new Date().toLocaleString()});
+  requests.push({table:'Table B', requester:'S1002', time: new Date().toLocaleString()});
+
+  function showRequests(){
+    var tbody = document.querySelector('#reqTable tbody');
+    tbody.innerHTML = '';
+    if(requests.length === 0){ tbody.innerHTML = '<tr><td colspan="4">No requests</td></tr>'; return; }
+    for(var i=0;i<requests.length;i++){
+      var r = requests[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + r.table + '</td><td>' + r.requester + '</td><td>' + r.time + '</td>' +
+                     '<td><button onclick="approve(' + i + ')">Approve</button> <button onclick="reject(' + i + ')">Reject</button></td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  function approve(i){
+    // mark approved simply by removing from requests for demo
+    requests.splice(i,1);
+    showRequests();
+    alert('Approved (demo)');
+  }
+  function reject(i){
+    requests.splice(i,1);
+    showRequests();
+    alert('Rejected');
+  }
+
+  // class reservations
+  function showClasses(){
+    var tbody = document.querySelector('#classTable tbody');
+    tbody.innerHTML = '';
+    var sel = document.getElementById('chooseClass');
+    sel.innerHTML = '';
+    if(classes.length === 0){ tbody.innerHTML = '<tr><td colspan="3">No classes</td></tr>'; sel.innerHTML = '<option value="">--none--</option>'; return; }
+    for(var i=0;i<classes.length;i++){
+      var c = classes[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + c.name + '</td><td>' + c.when + '</td>' +
+                     '<td><button onclick="delClass(' + i + ')">Delete</button></td>';
+      tbody.appendChild(tr);
+      var opt = document.createElement('option');
+      opt.value = i;
+      opt.text = c.name + ' — ' + c.when;
+      sel.appendChild(opt);
+    }
+  }
+
+  document.getElementById('createClass').addEventListener('click', function(){
+    var n = document.getElementById('c_name').value.trim();
+    var w = document.getElementById('c_when').value;
+    if(n === '' || w === ''){ alert('Fill both'); return; }
+    // store readable datetime
+    var when = (new Date(w)).toLocaleString();
+    classes.push({name:n, when:when});
+    document.getElementById('c_name').value = ''; document.getElementById('c_when').value = '';
+    showClasses();
+  });
+
+  function delClass(i){ classes.splice(i,1); showClasses(); }
+
+  // mark whole class present (demo uses fake students)
+  document.getElementById('markClass').addEventListener('click', function(){
+    var idx = document.getElementById('chooseClass').value;
+    if(idx === ''){ alert('Select a class'); return; }
+    // add 10 fake students
+    for(var j=1;j<=10;j++){
+      var s = 'S' + (2000 + j);
+      attendance.push({student: s, ts: new Date().toLocaleString()});
+    }
+    showAttendance();
+    alert('Marked 10 students present (demo)');
+  });
+
+  function showAttendance(){
+    var tbody = document.querySelector('#attLog tbody');
+    tbody.innerHTML = '';
+    if(attendance.length === 0){ tbody.innerHTML = '<tr><td colspan="2">No attendance</td></tr>'; return; }
+    for(var i=attendance.length-1;i>=0;i--){
+      var a = attendance[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + a.student + '</td><td>' + a.ts + '</td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  // init
+  showRequests();
+  showClasses();
+  showAttendance();
+</script>
+</body>
+</html>

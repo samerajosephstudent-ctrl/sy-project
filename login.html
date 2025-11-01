@@ -160,7 +160,7 @@
 <body>
   <!-- NAVBAR -->
   <div class="navbar">
-    <div class="navbar-left">MyWeb</div>
+    <div class="navbar-left">PHS Calixto</div>
     <div class="navbar-right">
       <button>Contact</button>
       <button>Info</button>
@@ -202,171 +202,222 @@
   </div>
 
   <script>
-    let currentArea = 'main';
-    let darkMode = false;
+  let currentArea = 'main';
+  let darkMode = false;
 
-    function goToBA() {
-      document.getElementById("mainArea").classList.add("hidden");
-      document.getElementById("areaBA").classList.remove("hidden");
-      currentArea = 'BA';
+  function goToBA() {
+    document.getElementById("mainArea").classList.add("hidden");
+    document.getElementById("areaBA").classList.remove("hidden");
+    currentArea = 'BA';
+  }
+
+  function goToAA(role) {
+    document.getElementById("mainArea").classList.add("hidden");
+    document.getElementById("areaBA").classList.add("hidden");
+    document.getElementById("areaAA").classList.remove("hidden");
+
+    const section = document.getElementById("loginSection");
+    section.innerHTML = ''; // clear previous form
+
+    const loginBox = document.createElement("div");
+    loginBox.classList.add("login-box");
+
+    const title = document.createElement("h2");
+    title.textContent = role + " Login";
+    loginBox.appendChild(title);
+
+    // Dynamic fields per role
+    if (role === "Student") {
+  // Regular account login
+  loginBox.innerHTML += `
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button id="login-btn" onclick="login('${role}')">Login</button>
+  `;
+
+  // No account login card
+  const altBox = document.createElement("div");
+  altBox.classList.add("login-box");
+  altBox.style.width = "300px";
+  altBox.innerHTML = `
+    <h2>No Account Login</h2>
+    <input type="text" id="lrn" placeholder="LRN">
+    <input type="text" id="grade" placeholder="Grade Level">
+    <input type="text" id="section" placeholder="Section">
+    <button onclick="noAccountLogin()">Log Attendance</button>
+  `;
+
+  const container = document.createElement("div");
+  container.classList.add("login-container");
+  container.style.justifyContent = "center";
+  container.style.gap = "20px";
+  container.appendChild(loginBox);
+  container.appendChild(altBox);
+
+  section.innerHTML = "";
+  section.appendChild(container);
+
+  document.getElementById("password").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("login-btn").click();
+  });
+}
+ else if (role === "Teacher") {
+      loginBox.innerHTML += `
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <input type="text" id="subject" placeholder="Subject Code">
+        <button id="login-btn" onclick="login('${role}')">Login</button>
+      `;
+      section.appendChild(loginBox);
+      document.getElementById("subject").addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById("login-btn").click();
+      });
+
+    } else if (role === "Librarian") {
+      loginBox.innerHTML += `
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <input type="text" id="idnumber" placeholder="Staff ID">
+        <button id="login-btn" onclick="login('${role}')">Login</button>
+      `;
+      section.appendChild(loginBox);
+      document.getElementById("idnumber").addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById("login-btn").click();
+      });
+
+    } else if (role === "Admin") {
+      loginBox.innerHTML += `
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <input type="text" id="securitykey" placeholder="Security Key">
+        <button id="login-btn" onclick="login('${role}')">Login</button>
+      `;
+      section.appendChild(loginBox);
+      document.getElementById("securitykey").addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById("login-btn").click();
+      });
     }
 
-    function goToAA(role) {
-      document.getElementById("mainArea").classList.add("hidden");
+    currentArea = 'AA';
+  }
+
+  function goBack(from) {
+    if (from === 'AA') {
+      document.getElementById("areaAA").classList.add("hidden");
+      document.getElementById("mainArea").classList.remove("hidden");
+    } else if (from === 'BA') {
       document.getElementById("areaBA").classList.add("hidden");
-      document.getElementById("areaAA").classList.remove("hidden");
+      document.getElementById("mainArea").classList.remove("hidden");
+    }
+  }
 
-      const section = document.getElementById("loginSection");
-      section.innerHTML = ''; // clear previous form
+  function login(role) {
+    const username = document.getElementById("username")?.value.trim().toLowerCase();
+    const password = document.getElementById("password")?.value.trim();
+    const subject = document.getElementById("subject")?.value.trim();
+    const idnumber = document.getElementById("idnumber")?.value.trim();
+    const securitykey = document.getElementById("securitykey")?.value.trim();
 
-      const loginBox = document.createElement("div");
-      loginBox.classList.add("login-box");
-
-      const title = document.createElement("h2");
-      title.textContent = role + " Login";
-      loginBox.appendChild(title);
-
-      if (role === "Student") {
-        loginBox.innerHTML += `
-          <input type="text" id="username" placeholder="Username">
-          <input type="password" id="password" placeholder="Password">
-          <button id="login-btn" onclick="login('${role}')">Login</button>
-        `;
-
-        const alt = document.createElement("div");
-        alt.classList.add("alt-box");
-        alt.textContent = "No Login: Library Log";
-        section.appendChild(loginBox);
-        section.appendChild(alt);
-
-        document.getElementById("password").addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') document.getElementById("login-btn").click();
-        });
-
-      } else if (role === "Teacher") {
-        loginBox.innerHTML += `
-          <input type="text" id="username" placeholder="Username">
-          <input type="password" id="password" placeholder="Password">
-          <input type="text" id="subject" placeholder="Subject Code">
-          <button id="login-btn" onclick="login('${role}')">Login</button>
-        `;
-        section.appendChild(loginBox);
-
-        document.getElementById("subject").addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') document.getElementById("login-btn").click();
-        });
-
-      } else if (role === "Librarian") {
-        loginBox.innerHTML += `
-          <input type="text" id="username" placeholder="Username">
-          <input type="password" id="password" placeholder="Password">
-          <input type="text" id="idnumber" placeholder="Staff ID">
-          <button id="login-btn" onclick="login('${role}')">Login</button>
-        `;
-        section.appendChild(loginBox);
-
-        document.getElementById("idnumber").addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') document.getElementById("login-btn").click();
-        });
-
-      } else if (role === "Admin") {
-        loginBox.innerHTML += `
-          <input type="text" id="username" placeholder="Username">
-          <input type="password" id="password" placeholder="Password">
-          <input type="text" id="securitykey" placeholder="Security Key">
-          <button id="login-btn" onclick="login('${role}')">Login</button>
-        `;
-        section.appendChild(loginBox);
-
-        document.getElementById("securitykey").addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') document.getElementById("login-btn").click();
-        });
-      }
-
-      currentArea = 'AA';
+    // Basic field validation
+    if (username === '' || password === '') {
+      alert("Please fill out all fields.");
+      return;
     }
 
-    function goBack(from) {
-      if (from === 'AA') {
-        document.getElementById("areaAA").classList.add("hidden");
-        document.getElementById("mainArea").classList.remove("hidden");
-      } else if (from === 'BA') {
-        document.getElementById("areaBA").classList.add("hidden");
-        document.getElementById("mainArea").classList.remove("hidden");
+    // Credential check
+    if (username === role.toLowerCase() && password === '123') {
+      // Check special fields if applicable
+      if (role === "Teacher" && subject === '') {
+        alert("Please enter your Subject Code.");
+        return;
       }
-    }
-
-    function login(role) {
-      const username = document.getElementById("username")?.value || '';
-      const password = document.getElementById("password")?.value || '';
-
-      if (username === '' || password === '') {
-        alert("Please fill out all fields.");
+      if (role === "Librarian" && idnumber === '') {
+        alert("Please enter your Staff ID.");
+        return;
+      }
+      if (role === "Admin" && securitykey === '') {
+        alert("Please enter your Security Key.");
         return;
       }
 
-      alert(role + " login successful for: " + username);
-    }
-
-    // 🌙 THEME TOGGLE FUNCTION WITH ANIMATION
-    function toggleTheme() {
-      const body = document.body;
-      const boxes = document.querySelectorAll(".box");
-      const themeBtn = document.getElementById("theme-btn");
-
-      // Add fade overlay for smooth transition
-      const fade = document.createElement("div");
-      fade.style.position = "fixed";
-      fade.style.top = "0";
-      fade.style.left = "0";
-      fade.style.width = "100%";
-      fade.style.height = "100%";
-      fade.style.backgroundColor = darkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.4)";
-      fade.style.zIndex = "9999";
-      fade.style.pointerEvents = "none";
-      fade.style.transition = "opacity 0.6s ease";
-      document.body.appendChild(fade);
-
-      fade.offsetHeight; // trigger reflow
-      fade.style.opacity = "0";
-
-      darkMode = !darkMode;
-
-      if (darkMode) {
-        // Dark mode
-        body.style.backgroundImage = "url('assets/darkbg.jpg')";
-        body.style.backgroundColor = "rgba(30, 30, 30, 0.95)";
-        boxes.forEach(box => {
-          box.addEventListener("mouseenter", () => {
-            box.style.backgroundColor = "#c9b200";
-            box.style.boxShadow = "0 4px 7px #c9b200";
-          });
-          box.addEventListener("mouseleave", () => {
-            box.style.backgroundColor = "rgba(243,243,243,0.15)";
-            box.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.644)";
-          });
-        });
-        themeBtn.textContent = "Light Mode";
-      } else {
-        // Light mode
-        body.style.backgroundImage = "url('assets/lightbg.jpg')";
-        body.style.backgroundColor = "rgba(255, 242, 61, 0.911)";
-        boxes.forEach(box => {
-          box.addEventListener("mouseenter", () => {
-            box.style.backgroundColor = "#f2f53b";
-            box.style.boxShadow = "0 4px 7px #ffe819";
-          });
-          box.addEventListener("mouseleave", () => {
-            box.style.backgroundColor = "rgba(243,243,243,0.15)";
-            box.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.644)";
-          });
-        });
-        themeBtn.textContent = "Dark Mode";
+      // Redirects per role
+      alert(role + " login successful!");
+      switch (role) {
+        case "Student":
+          window.location.href = "student-dashboard.html";
+          break;
+        case "Teacher":
+          window.location.href = "teacher-dashboard.html";
+          break;
+        case "Librarian":
+          window.location.href = "librarian-dashboard.html";
+          break;
+        case "Admin":
+          window.location.href = "admin-dashboard.html";
+          break;
       }
-
-      // Remove fade after animation
-      setTimeout(() => fade.remove(), 600);
+    } else {
+      alert("Invalid credentials. Try again.");
     }
-  </script>
+  }
+
+  // Theme toggle (unchanged)
+  function toggleTheme() {
+    const body = document.body;
+    const boxes = document.querySelectorAll(".box");
+    const themeBtn = document.getElementById("theme-btn");
+
+    const fade = document.createElement("div");
+    fade.style.position = "fixed";
+    fade.style.top = "0";
+    fade.style.left = "0";
+    fade.style.width = "100%";
+    fade.style.height = "100%";
+    fade.style.backgroundColor = darkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.4)";
+    fade.style.zIndex = "9999";
+    fade.style.pointerEvents = "none";
+    fade.style.transition = "opacity 0.6s ease";
+    document.body.appendChild(fade);
+
+    fade.offsetHeight;
+    fade.style.opacity = "0";
+
+    darkMode = !darkMode;
+
+    if (darkMode) {
+      body.style.backgroundImage = "url('assets/darkbg.jpg')";
+      body.style.backgroundColor = "rgba(30, 30, 30, 0.95)";
+      boxes.forEach(box => {
+        box.addEventListener("mouseenter", () => {
+          box.style.backgroundColor = "#c9b200";
+          box.style.boxShadow = "0 4px 7px #c9b200";
+        });
+        box.addEventListener("mouseleave", () => {
+          box.style.backgroundColor = "rgba(243,243,243,0.15)";
+          box.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.644)";
+        });
+      });
+      themeBtn.textContent = "Light Mode";
+    } else {
+      body.style.backgroundImage = "url('assets/lightbg.jpg')";
+      body.style.backgroundColor = "rgba(255, 242, 61, 0.911)";
+      boxes.forEach(box => {
+        box.addEventListener("mouseenter", () => {
+          box.style.backgroundColor = "#f2f53b";
+          box.style.boxShadow = "0 4px 7px #ffe819";
+        });
+        box.addEventListener("mouseleave", () => {
+          box.style.backgroundColor = "rgba(243,243,243,0.15)";
+          box.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.644)";
+        });
+      });
+      themeBtn.textContent = "Dark Mode";
+    }
+
+    setTimeout(() => fade.remove(), 600);
+  }
+</script>
+
+
 </body>
 </html>

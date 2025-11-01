@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin Dashboard — Simple</title>
+<style>
+  body{font-family:Arial;margin:0;background:#f7f3e6 url('assets/lightbg.jpg') center/cover}
+  .navbar{margin:16px;padding:14px;background:rgba(255,200,0,0.12);border-radius:18px;display:flex;justify-content:space-between}
+  .container{max-width:1000px;margin:18px auto;padding:0 12px;display:grid;gap:14px}
+  .card{background:#fff;padding:12px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+  .btn{background:#f39c12;border:none;color:#fff;padding:8px 10px;border-radius:6px;cursor:pointer}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:8px;border-bottom:1px solid #eee}
+</style>
+</head>
+<body>
+  <div class="navbar"><div class="brand">PHS Calixto — Admin</div><div>Admin area</div></div>
+
+  <div class="container">
+    <div class="card">
+      <h3>User Management</h3>
+      <input id="u_name" placeholder="Name" />
+      <select id="u_role"><option>Student</option><option>Teacher</option><option>Librarian</option><option>Admin</option></select>
+      <button class="btn" id="addUser">Add</button>
+
+      <table id="userTable"><thead><tr><th>Name</th><th>Role</th><th>Action</th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="card">
+      <h3>System Settings</h3>
+      <label><input type="checkbox" id="s_qr"> Enable QR</label><br>
+      <label><input type="checkbox" id="s_notify"> Enable Notifications</label><br>
+      <button class="btn" id="saveConf">Save</button>
+    </div>
+
+    <div class="card">
+      <h3>Demo Controls</h3>
+      <button class="btn" id="clearAll">Clear All (reset in-memory)</button>
+    </div>
+  </div>
+
+<script>
+  // in-memory arrays
+  var users = []; // {name, role}
+  var config = {qr: false, notify: false};
+
+  function showUsers(){
+    var tbody = document.querySelector('#userTable tbody');
+    tbody.innerHTML = '';
+    if(users.length === 0){ tbody.innerHTML = '<tr><td colspan="3">No users</td></tr>'; return; }
+    for(var i=0;i<users.length;i++){
+      var u = users[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + u.name + '</td><td>' + u.role + '</td>' +
+                     '<td><button onclick="delUser(' + i + ')">Delete</button></td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  document.getElementById('addUser').addEventListener('click', function(){
+    var n = document.getElementById('u_name').value.trim();
+    var r = document.getElementById('u_role').value;
+    if(n === ''){ alert('Enter name'); return; }
+    users.push({name: n, role: r});
+    document.getElementById('u_name').value = '';
+    showUsers();
+  });
+
+  function delUser(i){
+    users.splice(i,1);
+    showUsers();
+  }
+
+  document.getElementById('saveConf').addEventListener('click', function(){
+    config.qr = document.getElementById('s_qr').checked;
+    config.notify = document.getElementById('s_notify').checked;
+    alert('Config saved (in memory)');
+  });
+
+  document.getElementById('clearAll').addEventListener('click', function(){
+    if(!confirm('Reset demo data?')) return;
+    users = []; config = {qr:false, notify:false};
+    document.getElementById('s_qr').checked = false;
+    document.getElementById('s_notify').checked = false;
+    showUsers();
+    alert('Reset done (in memory)');
+  });
+
+  // init
+  showUsers();
+</script>
+</body>
+</html>

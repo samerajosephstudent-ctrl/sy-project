@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Student Dashboard — Simple</title>
+<style>
+  /* background + navbar based on your login look */
+  body{
+    font-family: Arial, sans-serif;
+    margin:0;
+    min-height:100vh;
+    background: #f7f3e6 url('assets/lightbg.jpg') center/cover no-repeat;
+    color:#222;
+  }
+  .navbar{
+    margin:16px;
+    padding:14px 18px;
+    background: rgba(255,200,0,0.12);
+    border-radius:18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .brand{font-weight:700}
+  .container{max-width:1000px;margin:18px auto;display:grid;gap:14px;padding:0 12px}
+  .card{background: rgba(255,255,255,0.8);padding:12px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+  .btn{background:#f39c12;border:none;color:white;padding:8px 10px;border-radius:6px;cursor:pointer}
+  input,select{padding:8px;border-radius:6px;border:1px solid #ccc}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+  @media(min-width:900px){ .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px} }
+</style>
+</head>
+<body>
+  <div class="navbar">
+    <div class="brand">PHS Calixto — Student</div>
+    <div>Welcome</div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h3>My Borrowed Books</h3>
+      <div>
+        <!-- small form to add borrowed book -->
+        <input id="b_title" placeholder="Book title" />
+        <input id="b_days" placeholder="Days till due" type="number" style="width:120px" />
+        <button class="btn" id="addBorrow">Borrow</button>
+      </div>
+      <table id="borrowTable">
+        <thead><tr><th>Title</th><th>Due</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Reserve Study Table</h3>
+      <div class="grid2">
+        <div>
+          <input id="r_name" placeholder="Your name or LRN" />
+        </div>
+        <div>
+          <select id="r_table">
+            <option>Table A</option>
+            <option>Table B</option>
+            <option>Table C</option>
+          </select>
+          <button class="btn" id="reserveBtn">Reserve</button>
+        </div>
+      </div>
+      <table id="reserveTable">
+        <thead><tr><th>Table</th><th>Requester</th><th>Time</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Library Attendance</h3>
+      <div>
+        <input id="a_lrn" placeholder="Enter LRN" />
+        <button class="btn" id="attBtn">Log Attendance</button>
+      </div>
+      <table id="attTable">
+        <thead><tr><th>LRN</th><th>Timestamp</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+  // simple arrays in memory
+  var borrows = []; // {title:..., due:Date}
+  var reserves = []; // {table:..., requester:..., time:...}
+  var attendance = []; // {lrn:..., ts:...}
+
+  // render borrows
+  function showBorrows(){
+    var tbody = document.querySelector('#borrowTable tbody');
+    tbody.innerHTML = '';
+    if(borrows.length === 0){
+      tbody.innerHTML = '<tr><td colspan="3">No borrowed books</td></tr>';
+      return;
+    }
+    for(var i=0; i<borrows.length; i++){
+      var b = borrows[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + b.title + '</td><td>' + b.due + '</td>' +
+                     '<td><button onclick="returnBook(' + i + ')">Return</button></td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  function returnBook(i){
+    // remove item
+    borrows.splice(i,1);
+    showBorrows();
+  }
+
+  document.getElementById('addBorrow').addEventListener('click', function(){
+    var t = document.getElementById('b_title').value.trim();
+    var d = parseInt(document.getElementById('b_days').value,10) || 7;
+    if(t === ''){ alert('Enter title'); return; }
+    var due = new Date();
+    due.setDate(due.getDate() + d);
+    borrows.push({title: t, due: due.toLocaleDateString()});
+    document.getElementById('b_title').value = '';
+    document.getElementById('b_days').value = '';
+    showBorrows();
+  });
+
+  // reserves
+  function showReserves(){
+    var tbody = document.querySelector('#reserveTable tbody');
+    tbody.innerHTML = '';
+    if(reserves.length === 0){
+      tbody.innerHTML = '<tr><td colspan="4">No reservations</td></tr>';
+      return;
+    }
+    for(var i=0; i<reserves.length; i++){
+      var r = reserves[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + r.table + '</td><td>' + r.requester + '</td><td>' + r.time + '</td>' +
+                     '<td><button onclick="cancelReserve(' + i + ')">Cancel</button></td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  document.getElementById('reserveBtn').addEventListener('click', function(){
+    var name = document.getElementById('r_name').value.trim() || 'Unknown';
+    var table = document.getElementById('r_table').value;
+    var now = new Date().toLocaleString();
+    reserves.push({table: table, requester: name, time: now});
+    document.getElementById('r_name').value = '';
+    showReserves();
+  });
+
+  function cancelReserve(i){
+    reserves.splice(i,1);
+    showReserves();
+  }
+
+  // attendance
+  function showAtt(){
+    var tbody = document.querySelector('#attTable tbody');
+    tbody.innerHTML = '';
+    if(attendance.length === 0){
+      tbody.innerHTML = '<tr><td colspan="2">No attendance logs</td></tr>'; return;
+    }
+    for(var i=attendance.length-1; i>=0; i--){ // newest first
+      var a = attendance[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + a.lrn + '</td><td>' + a.ts + '</td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  document.getElementById('attBtn').addEventListener('click', function(){
+    var lrn = document.getElementById('a_lrn').value.trim();
+    if(lrn === ''){ alert('Enter LRN'); return; }
+    attendance.push({lrn: lrn, ts: new Date().toLocaleString()});
+    document.getElementById('a_lrn').value = '';
+    showAtt();
+  });
+
+  // initial render
+  showBorrows();
+  showReserves();
+  showAtt();
+</script>
+</body>
+</html>

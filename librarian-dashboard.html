@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Librarian Dashboard — Simple</title>
+<style>
+  body{font-family:Arial, sans-serif; margin:0; background:#f7f3e6 url('assets/lightbg.jpg') center/cover}
+  .navbar{margin:16px;padding:14px;background:rgba(255,200,0,0.12);border-radius:18px;display:flex;justify-content:space-between}
+  .container{max-width:1000px;margin:18px auto;padding:0 12px;display:grid;gap:14px}
+  .card{background:#fff;padding:12px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+  .btn{background:#f39c12;border:none;color:#fff;padding:8px 10px;border-radius:6px;cursor:pointer}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:8px;border-bottom:1px solid #eee}
+</style>
+</head>
+<body>
+  <div class="navbar"><div class="brand">PHS Calixto — Librarian</div><div>Manage</div></div>
+
+  <div class="container">
+    <div class="card">
+      <h3>Inventory</h3>
+      <input id="book_title" placeholder="Title" />
+      <input id="book_author" placeholder="Author" />
+      <button class="btn" id="addBook">Add Book</button>
+
+      <table id="invTable"><thead><tr><th>Title</th><th>Author</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="card">
+      <h3>Borrow / Return</h3>
+      <select id="selectBook"></select>
+      <input id="borrow_lrn" placeholder="Student LRN" />
+      <input id="due_days" placeholder="Days" type="number" style="width:80px" />
+      <button class="btn" id="doBorrow">Borrow</button>
+      <button id="doReturn">Return</button>
+
+      <h4 style="margin-top:12px">Active Borrows</h4>
+      <table id="activeTable"><thead><tr><th>Title</th><th>Borrower</th><th>Due</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+<script>
+  // simple arrays
+  var books = []; // {id, title, author, status, borrower, due}
+  var borrows = []; // {bookId, title, borrower, due}
+
+  // add book
+  document.getElementById('addBook').addEventListener('click', function(){
+    var t = document.getElementById('book_title').value.trim();
+    var a = document.getElementById('book_author').value.trim();
+    if(t === ''){ alert('Enter title'); return; }
+    var id = Date.now();
+    books.push({id: id, title: t, author: a, status: 'Available'});
+    document.getElementById('book_title').value = ''; document.getElementById('book_author').value = '';
+    renderInventory();
+  });
+
+  function renderInventory(){
+    var tbody = document.querySelector('#invTable tbody');
+    tbody.innerHTML = '';
+    var select = document.getElementById('selectBook');
+    select.innerHTML = '';
+    if(books.length === 0){ tbody.innerHTML = '<tr><td colspan="4">No books</td></tr>'; select.innerHTML = '<option value="">--none--</option>'; return; }
+    for(var i=0;i<books.length;i++){
+      var b = books[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + b.title + '</td><td>' + b.author + '</td><td>' + (b.status || '') + '</td>' +
+                     '<td><button onclick="removeBook(' + i + ')">Remove</button></td>';
+      tbody.appendChild(tr);
+      var opt = document.createElement('option');
+      opt.value = b.id;
+      opt.text = b.title + ' - ' + (b.status || 'Unknown');
+      select.appendChild(opt);
+    }
+    renderActive();
+  }
+
+  function removeBook(i){
+    books.splice(i,1);
+    renderInventory();
+  }
+
+  // borrow
+  document.getElementById('doBorrow').addEventListener('click', function(){
+    var sel = document.getElementById('selectBook').value;
+    var lrn = document.getElementById('borrow_lrn').value.trim();
+    var days = parseInt(document.getElementById('due_days').value,10) || 7;
+    if(sel === '' || lrn === ''){ alert('Select book and enter LRN'); return; }
+    // find book
+    var book = null;
+    for(var i=0;i<books.length;i++){ if(String(books[i].id) === String(sel)){ book = books[i]; break; } }
+    if(!book){ alert('Book not found'); return; }
+    if(book.status === 'Borrowed'){ alert('Already borrowed'); return; }
+    book.status = 'Borrowed'; book.borrower = lrn;
+    var due = new Date(); due.setDate(due.getDate() + days);
+    book.due = due.toLocaleDateString();
+    borrows.push({bookId: book.id, title: book.title, borrower: lrn, due: book.due});
+    document.getElementById('borrow_lrn').value = ''; document.getElementById('due_days').value = '';
+    renderInventory();
+  });
+
+  document.getElementById('doReturn').addEventListener('click', function(){
+    var sel = document.getElementById('selectBook').value;
+    if(sel === ''){ alert('Select a book'); return; }
+    for(var i=0;i<books.length;i++){
+      if(String(books[i].id) === String(sel)){
+        if(books[i].status !== 'Borrowed'){ alert('Book not borrowed'); return; }
+        books[i].status = 'Available';
+        delete books[i].borrower;
+        delete books[i].due;
+        // remove from borrows array simple loop
+        for(var j=0;j<borrows.length;j++){
+          if(String(borrows[j].bookId) === String(sel) && borrows[j].borrower){
+            borrows.splice(j,1);
+            break;
+          }
+        }
+        renderInventory();
+        alert('Marked returned');
+        return;
+      }
+    }
+  });
+
+  function renderActive(){
+    var tbody = document.querySelector('#activeTable tbody');
+    tbody.innerHTML = '';
+    if(borrows.length === 0){ tbody.innerHTML = '<tr><td colspan="3">No active borrows</td></tr>'; return; }
+    for(var i=0;i<borrows.length;i++){
+      var b = borrows[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + b.title + '</td><td>' + b.borrower + '</td><td>' + b.due + '</td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  // init
+  renderInventory();
+  renderActive();
+</script>
+</body>
+</html>
