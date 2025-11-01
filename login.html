@@ -9,15 +9,18 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url(pic2.jpg);
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-image: url(assets/lightbg.jpg);
       background-color: rgba(255, 242, 61, 0.911);  
       backdrop-filter: blur(1px);
-      
+      transition: background-color 0.6s ease, background-image 0.6s ease;
     }
+
     /* NAVBAR */
     .navbar {
-      background-color: rgba(255, 255, 255, .15);  
-      backdrop-filter: blur(5px);
+      background-color: rgba(255, 200, 0, 0.15);
       padding: 20px 20px;
       display: flex;
       justify-content: space-between;
@@ -76,7 +79,7 @@
       border: 3px;
       box-shadow: 0 3px 6px rgba(0, 0, 0, 0.644);
       cursor: pointer;
-      transition: 0.2s;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
     }
 
     .box:hover {
@@ -162,7 +165,7 @@
       <button>Contact</button>
       <button>Info</button>
       <button>Home</button>
-      <button>Theme</button>
+      <button id="theme-btn" onclick="toggleTheme()">Theme</button>
     </div>
   </div>
 
@@ -200,6 +203,7 @@
 
   <script>
     let currentArea = 'main';
+    let darkMode = false;
 
     function goToBA() {
       document.getElementById("mainArea").classList.add("hidden");
@@ -222,7 +226,6 @@
       title.textContent = role + " Login";
       loginBox.appendChild(title);
 
-      // Dynamic fields based on role
       if (role === "Student") {
         loginBox.innerHTML += `
           <input type="text" id="username" placeholder="Username">
@@ -233,14 +236,11 @@
         const alt = document.createElement("div");
         alt.classList.add("alt-box");
         alt.textContent = "No Login: Library Log";
-
         section.appendChild(loginBox);
         section.appendChild(alt);
 
         document.getElementById("password").addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            document.getElementById("login-btn").click();
-          }
+          if (e.key === 'Enter') document.getElementById("login-btn").click();
         });
 
       } else if (role === "Teacher") {
@@ -253,9 +253,7 @@
         section.appendChild(loginBox);
 
         document.getElementById("subject").addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            document.getElementById("login-btn").click();
-          }
+          if (e.key === 'Enter') document.getElementById("login-btn").click();
         });
 
       } else if (role === "Librarian") {
@@ -268,9 +266,7 @@
         section.appendChild(loginBox);
 
         document.getElementById("idnumber").addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            document.getElementById("login-btn").click();
-          }
+          if (e.key === 'Enter') document.getElementById("login-btn").click();
         });
 
       } else if (role === "Admin") {
@@ -283,9 +279,7 @@
         section.appendChild(loginBox);
 
         document.getElementById("securitykey").addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            document.getElementById("login-btn").click();
-          }
+          if (e.key === 'Enter') document.getElementById("login-btn").click();
         });
       }
 
@@ -314,11 +308,65 @@
       alert(role + " login successful for: " + username);
     }
 
-    setTimeout(function() {
-        window.location.href = 'homepage.html';
-    }, 1200);
-    alert(role + " login successful for: " + username);
+    // 🌙 THEME TOGGLE FUNCTION WITH ANIMATION
+    function toggleTheme() {
+      const body = document.body;
+      const boxes = document.querySelectorAll(".box");
+      const themeBtn = document.getElementById("theme-btn");
 
+      // Add fade overlay for smooth transition
+      const fade = document.createElement("div");
+      fade.style.position = "fixed";
+      fade.style.top = "0";
+      fade.style.left = "0";
+      fade.style.width = "100%";
+      fade.style.height = "100%";
+      fade.style.backgroundColor = darkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.4)";
+      fade.style.zIndex = "9999";
+      fade.style.pointerEvents = "none";
+      fade.style.transition = "opacity 0.6s ease";
+      document.body.appendChild(fade);
+
+      fade.offsetHeight; // trigger reflow
+      fade.style.opacity = "0";
+
+      darkMode = !darkMode;
+
+      if (darkMode) {
+        // Dark mode
+        body.style.backgroundImage = "url('assets/darkbg.jpg')";
+        body.style.backgroundColor = "rgba(30, 30, 30, 0.95)";
+        boxes.forEach(box => {
+          box.addEventListener("mouseenter", () => {
+            box.style.backgroundColor = "#c9b200";
+            box.style.boxShadow = "0 4px 7px #c9b200";
+          });
+          box.addEventListener("mouseleave", () => {
+            box.style.backgroundColor = "rgba(243,243,243,0.15)";
+            box.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.644)";
+          });
+        });
+        themeBtn.textContent = "Light Mode";
+      } else {
+        // Light mode
+        body.style.backgroundImage = "url('assets/lightbg.jpg')";
+        body.style.backgroundColor = "rgba(255, 242, 61, 0.911)";
+        boxes.forEach(box => {
+          box.addEventListener("mouseenter", () => {
+            box.style.backgroundColor = "#f2f53b";
+            box.style.boxShadow = "0 4px 7px #ffe819";
+          });
+          box.addEventListener("mouseleave", () => {
+            box.style.backgroundColor = "rgba(243,243,243,0.15)";
+            box.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.644)";
+          });
+        });
+        themeBtn.textContent = "Dark Mode";
+      }
+
+      // Remove fade after animation
+      setTimeout(() => fade.remove(), 600);
+    }
   </script>
 </body>
 </html>
