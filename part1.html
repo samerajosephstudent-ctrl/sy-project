@@ -1,182 +1,219 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MyWeb Portal</title>
-    <style>
-        body {
-            background-color: #ffb347;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            background-color: #fff9f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100vh;
-            position: fixed;
-            box-sizing: border-box;
-        }
-        #loading {
-            display: none;
-            text-align: center;
-        }
-        .loader {
-            border: 8px solid #fff;
-            border-top: 8px solid #3498db;
-            align-self: center;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1.5s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        #cardHolder {
-            background-color: #fff9f0;
-            color: black;
-            border: 3px solid #ffb347;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            width: 80%;
-            height: 50% auto;
-            position: fixed;
-            box-shadow: 0 0 8px rgba(0, 0, 0,0.5);
-            outline: none;
-            text-decoration: none;
-        }
-        #head {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 26px;
-            font-weight: bolder;
-        }
-        #cardAbout {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 20px;
-            height: 0 auto;
-        }
-        #cardGoal {
-            display: none;
-        }
-        #cardCredits {
-            display: none;
-        }
-        #changeButton {
-            font-size: 30px;
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            border: none;
-            outline: none;
-        }
-        .button {
-            align-self: center;
-            width: 100%;
-            height: 0 auto;
-        }
-        #credit {
-            font-weight: bold;
-        }
-        h1 {
-            width: 100%;
-            color: white;
-        }
-    </style>
-</head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PHS - Calixto Library</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", Arial, sans-serif;
+      background: linear-gradient(135deg, #fff8d6, #ffe97f);
+      background-attachment: fixed;
+      color: #333;
+      overflow: hidden;
+    }
 
+    /* Top Bar */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ffb347;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 22px;
+      letter-spacing: 1px;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Splash Screen */
+    .splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background-color: #ffb347;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 999;
+      animation: fadeOut 0.8s ease forwards;
+      animation-delay: 3.5s;
+    }
+
+    .splash h1 {
+      color: white;
+      font-size: 42px;
+      letter-spacing: 1px;
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+
+    /* Main Card */
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+      margin-top: 70px; /* prevents overlap with top bar */
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.85);
+      border: 3px solid #ffd166;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      padding: 30px 25px;
+      width: 85%;
+      max-width: 500px;
+      text-align: center;
+      backdrop-filter: blur(6px);
+      transition: all 0.4s ease;
+    }
+
+    .card h2 {
+      color: #222;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    /* Button */
+    .next-btn {
+      background-color: #ffa500;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 25px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .next-btn:hover {
+      background-color: #ff8c00;
+      transform: scale(1.05);
+    }
+
+    /* Loader */
+    .loader {
+      display: none;
+      margin: 25px auto;
+      border: 6px solid #fff;
+      border-top: 6px solid #ffb347;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+  </style>
+</head>
 <body>
+  <!-- Top Bar -->
+  <div class="topbar">
+    PHS - Calixto Library
+  </div>
+
+  <!-- Splash screen -->
+  <div class="splash">
     <h1>PHS - Calixto Library</h1>
-    <div class="container">
-        <div id="cardHolder"><br><h2 id="head">About</h2>
-            <div id="cardAbout">This Phs-Calixto Library aims to help students who wants to study and read about knowledges in past history, cultures of the other country, books regarding their future courses that might help them, businesses, religions, english books, etc.
-                <div id="loading">
-                <div class="loader"></div>
-                </div>
-                </div><br>
-            <div id="cardGoal">It helps students who are devoted to study for a better future</div>  
-            <div id="cardCredits"><p id="credit">Web Developer</p><p>Joseph Samera</p><p>Francis Salas</p><p id="credit">Web Designer</p><p>Honney Ocampo</p><p>Jethro Sandoval<p></div>
-            <div class="button">
-            <button id="changeButton" type="submit">»</button>
-            </div>
-        </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="container">
+    <div class="card" id="card">
+      <h2 id="cardTitle">About</h2>
+      <p id="cardText">
+        This PHS-Calixto Library aims to help students who wish to study and
+        explore knowledge in history, culture, future courses, business, religion,
+        and more through reading.
+      </p>
+      <div class="loader" id="loader"></div>
+      <button class="next-btn" id="nextBtn">Next »</button>
     </div>
-    
-    <script>
-            const divContainer = document.createElement('div');
-            const p1 = document.createElement('p');
-            p1.textContent = 'PHS - Calixto Library';
-            p1.style.fontWeight = 'bold';
-            p1.style.fontSize = '35px';
-            p1.style.color = 'white';
-            divContainer.appendChild(p1);
-            divContainer.style.position = 'fixed';
-            divContainer.style.top = '0';
-            divContainer.style.left = '0';
-            divContainer.style.display = 'flex';
-            divContainer.style.justifyContent = 'center';
-            divContainer.style.alignItems = 'center';
-            divContainer.style.width = '100%';
-            divContainer.style.height = '100vh';
-            divContainer.style.backgroundColor = '#ffb347';
-            divContainer.style.zIndex = '1000';
-            
-            document.body.appendChild(divContainer);
-            setTimeout(function() {
-                divContainer.style.display = 'none';
-            }, 4000);
-        
-    
-        let card = false;
-        const holder = document.getElementById("cardHolder");
-        const head = document.getElementById("head");
-        const about = document.getElementById("cardAbout");
-        const goal = document.getElementById("cardGoal");
-        const credits = document.getElementById("cardCredits");
-        const credit = document.getElementById("credit");
-        const button = document.getElementById("changeButton");
-        const loading = document.getElementById("loading");
-        
-        button.addEventListener('click', function() {
-            if (!card) {
-                head.textContent = 'Goal';
-                about.innerHTML = goal.innerHTML;
-                card = true;
-            }
-            else if (button.textContent === 'Login') {
-                button.textContent = 'Loading...';
-                button.style.width = '130px';
-                about.style.display = 'none';
-                loading.style.display = 'block';
-                /*button.appendChild(loading);*/
-                
-                setTimeout(function() {
-                    loading.style.display = 'none';
-                    window.location.href = 'login.html';
-                }, 4000)
-                
-            }
-            else {
-                head.textContent = 'Credits';
-                about.innerHTML = credits.innerHTML;
-                button.textContent = 'Login';
-                button.style.fontWeight = 'bold';
-                button.style.width = '80px';
-                button.style.fontSize = '25px';
-                card = true;
-            }
-            
-        });
-    </script>
+  </div>
+
+  <script>
+    const title = document.getElementById("cardTitle");
+    const text = document.getElementById("cardText");
+    const btn = document.getElementById("nextBtn");
+    const loader = document.getElementById("loader");
+
+    let step = 0;
+
+    const steps = [
+      {
+        title: "About",
+        text:
+          "This PHS-Calixto Library aims to help students who wish to study and explore knowledge in history, culture, future courses, business, religion, and more through reading.",
+        button: "Next »",
+      },
+      {
+        title: "Goal",
+        text:
+          "It helps students who are devoted to study for a better future and provides resources to support lifelong learning.",
+        button: "Next »",
+      },
+      {
+        title: "Credits",
+        text:
+          "<b>Web Developer</b><br>Joseph Samera<br>Francis Salas<br><b>Web Designer</b><br>Honney Ocampo<br>Jethro Sandoval",
+        button: "Login",
+      },
+    ];
+
+    btn.addEventListener("click", () => {
+      if (btn.textContent === "Login") {
+        btn.textContent = "Loading...";
+        btn.disabled = true;
+        text.style.display = "none";
+        loader.style.display = "block";
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 4000);
+      } else {
+        step++;
+        if (step >= steps.length) step = steps.length - 1;
+        title.textContent = steps[step].title;
+        text.innerHTML = steps[step].text;
+        btn.textContent = steps[step].button;
+      }
+    });
+
+    // Splash screen timeout
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.querySelector(".splash").style.display = "none";
+      }, 4000);
+    });
+  </script>
 </body>
 </html>

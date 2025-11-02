@@ -18,7 +18,6 @@
       transition: background-color 0.6s ease, background-image 0.6s ease;
     }
 
-    /* NAVBAR */
     .navbar {
       background-color: rgba(255, 200, 0, 0.15);
       padding: 20px 20px;
@@ -52,7 +51,45 @@
       text-decoration: none;
     }
 
-    /* CONTAINER */
+    .theme-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .theme-dropdown button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 100px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border-radius: 6px;
+      z-index: 10;
+    }
+
+    .dropdown-content a {
+      color: black;
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.2s;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+
+    .theme-dropdown:hover .dropdown-content {
+      display: block;
+    }
+
     .container {
       display: flex;
       flex-wrap: wrap;
@@ -76,7 +113,7 @@
       justify-content: center;
       align-items: center;
       border-radius: 15px;
-      border: 3px;
+      border: 3px solid #ffb347;
       box-shadow: 0 3px 6px rgba(0, 0, 0, 0.644);
       cursor: pointer;
       transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
@@ -88,11 +125,8 @@
       box-shadow:0 4px 7px #ffe819;
     }
 
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
 
-    /* LOGIN AREA */
     .login-container {
       display: flex;
       flex-wrap: wrap;
@@ -151,25 +185,26 @@
       text-align: center;
     }
 
-    h2 {
-      color: #333;
-      text-align: center;
-    }
+    h2 { color: #333; text-align: center; }
   </style>
 </head>
 <body>
-  <!-- NAVBAR -->
   <div class="navbar">
     <div class="navbar-left">PHS Calixto</div>
     <div class="navbar-right">
       <button>Contact</button>
       <button>Info</button>
       <button>Home</button>
-      <button id="theme-btn" onclick="toggleTheme()">Theme</button>
+      <div class="theme-dropdown">
+        <button id="theme-btn">Theme ▼</button>
+        <div class="dropdown-content">
+          <a href="#" onclick="setTheme('light')">Light</a>
+          <a href="#" onclick="setTheme('dark')">Dark</a>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- MAIN AREA -->
   <div class="container" id="mainArea">
     <div class="box" onclick="goToAA('Student')">
       <h2>Student</h2>
@@ -179,7 +214,6 @@
     </div>
   </div>
 
-  <!-- AREA BA -->
   <div class="container hidden" id="areaBA">
     <div class="box" onclick="goToAA('Teacher')">
       <h2>Teacher</h2>
@@ -193,17 +227,13 @@
     <button class="back-btn" onclick="goBack('BA')">Back</button>
   </div>
 
-  <!-- AREA AA (LOGIN FORMS) -->
   <div class="container hidden" id="areaAA">
-    <div class="login-container" id="loginSection">
-      <!-- dynamic login form inserted here -->
-    </div>
+    <div class="login-container" id="loginSection"></div>
     <button class="back-btn" onclick="goBack('AA')">Back</button>
   </div>
 
   <script>
   let currentArea = 'main';
-  let darkMode = false;
 
   function goToBA() {
     document.getElementById("mainArea").classList.add("hidden");
@@ -217,7 +247,7 @@
     document.getElementById("areaAA").classList.remove("hidden");
 
     const section = document.getElementById("loginSection");
-    section.innerHTML = ''; // clear previous form
+    section.innerHTML = ''; 
 
     const loginBox = document.createElement("div");
     loginBox.classList.add("login-box");
@@ -226,42 +256,34 @@
     title.textContent = role + " Login";
     loginBox.appendChild(title);
 
-    // Dynamic fields per role
     if (role === "Student") {
-  // Regular account login
-  loginBox.innerHTML += `
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button id="login-btn" onclick="login('${role}')">Login</button>
-  `;
+      loginBox.innerHTML += `
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button id="login-btn" onclick="login('${role}')">Login</button>
+      `;
 
-  // No account login card
-  const altBox = document.createElement("div");
-  altBox.classList.add("login-box");
-  altBox.style.width = "300px";
-  altBox.innerHTML = `
-    <h2>No Account Login</h2>
-    <input type="text" id="lrn" placeholder="LRN">
-    <input type="text" id="grade" placeholder="Grade Level">
-    <input type="text" id="section" placeholder="Section">
-    <button onclick="noAccountLogin()">Log Attendance</button>
-  `;
+      const altBox = document.createElement("div");
+      altBox.classList.add("login-box");
+      altBox.style.width = "300px";
+      altBox.innerHTML = `
+        <h2>No Account Login</h2>
+        <input type="text" id="lrn" placeholder="LRN">
+        <input type="text" id="grade" placeholder="Grade Level">
+        <input type="text" id="section" placeholder="Section">
+        <button onclick="noAccountLogin()">Log Attendance</button>
+      `;
 
-  const container = document.createElement("div");
-  container.classList.add("login-container");
-  container.style.justifyContent = "center";
-  container.style.gap = "20px";
-  container.appendChild(loginBox);
-  container.appendChild(altBox);
+      const container = document.createElement("div");
+      container.classList.add("login-container");
+      container.style.justifyContent = "center";
+      container.style.gap = "20px";
+      container.appendChild(loginBox);
+      container.appendChild(altBox);
 
-  section.innerHTML = "";
-  section.appendChild(container);
-
-  document.getElementById("password").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") document.getElementById("login-btn").click();
-  });
-}
- else if (role === "Teacher") {
+      section.innerHTML = "";
+      section.appendChild(container);
+    } else if (role === "Teacher") {
       loginBox.innerHTML += `
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
@@ -269,10 +291,6 @@
         <button id="login-btn" onclick="login('${role}')">Login</button>
       `;
       section.appendChild(loginBox);
-      document.getElementById("subject").addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') document.getElementById("login-btn").click();
-      });
-
     } else if (role === "Librarian") {
       loginBox.innerHTML += `
         <input type="text" id="username" placeholder="Username">
@@ -281,10 +299,6 @@
         <button id="login-btn" onclick="login('${role}')">Login</button>
       `;
       section.appendChild(loginBox);
-      document.getElementById("idnumber").addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') document.getElementById("login-btn").click();
-      });
-
     } else if (role === "Admin") {
       loginBox.innerHTML += `
         <input type="text" id="username" placeholder="Username">
@@ -293,12 +307,7 @@
         <button id="login-btn" onclick="login('${role}')">Login</button>
       `;
       section.appendChild(loginBox);
-      document.getElementById("securitykey").addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') document.getElementById("login-btn").click();
-      });
     }
-
-    currentArea = 'AA';
   }
 
   function goBack(from) {
@@ -318,15 +327,12 @@
     const idnumber = document.getElementById("idnumber")?.value.trim();
     const securitykey = document.getElementById("securitykey")?.value.trim();
 
-    // Basic field validation
     if (username === '' || password === '') {
       alert("Please fill out all fields.");
       return;
     }
 
-    // Credential check
     if (username === role.toLowerCase() && password === '123') {
-      // Check special fields if applicable
       if (role === "Teacher" && subject === '') {
         alert("Please enter your Subject Code.");
         return;
@@ -340,84 +346,46 @@
         return;
       }
 
-      // Redirects per role
       alert(role + " login successful!");
       switch (role) {
-        case "Student":
-          window.location.href = "student-dashboard.html";
-          break;
-        case "Teacher":
-          window.location.href = "teacher-dashboard.html";
-          break;
-        case "Librarian":
-          window.location.href = "librarian-dashboard.html";
-          break;
-        case "Admin":
-          window.location.href = "admin-dashboard.html";
-          break;
+        case "Student": window.location.href = "student-dashboard.html"; break;
+        case "Teacher": window.location.href = "teacher-dashboard.html"; break;
+        case "Librarian": window.location.href = "librarian-dashboard.html"; break;
+        case "Admin": window.location.href = "admin-dashboard.html"; break;
       }
     } else {
       alert("Invalid credentials. Try again.");
     }
   }
 
-  // Theme toggle (unchanged)
-  function toggleTheme() {
+  let currentTheme = 'light';
+  function setTheme(mode) {
     const body = document.body;
-    const boxes = document.querySelectorAll(".box");
-    const themeBtn = document.getElementById("theme-btn");
+    const boxes = document.querySelectorAll(".box, .login-box, .alt-box");
+    const textElements = document.querySelectorAll("h2, label, .navbar-left, .navbar-right button");
 
-    const fade = document.createElement("div");
-    fade.style.position = "fixed";
-    fade.style.top = "0";
-    fade.style.left = "0";
-    fade.style.width = "100%";
-    fade.style.height = "100%";
-    fade.style.backgroundColor = darkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.4)";
-    fade.style.zIndex = "9999";
-    fade.style.pointerEvents = "none";
-    fade.style.transition = "opacity 0.6s ease";
-    document.body.appendChild(fade);
-
-    fade.offsetHeight;
-    fade.style.opacity = "0";
-
-    darkMode = !darkMode;
-
-    if (darkMode) {
+    if (mode === 'dark') {
+      currentTheme = 'dark';
       body.style.backgroundImage = "url('assets/darkbg.jpg')";
-      body.style.backgroundColor = "rgba(30, 30, 30, 0.95)";
-      boxes.forEach(box => {
-        box.addEventListener("mouseenter", () => {
-          box.style.backgroundColor = "#c9b200";
-          box.style.boxShadow = "0 4px 7px #c9b200";
-        });
-        box.addEventListener("mouseleave", () => {
-          box.style.backgroundColor = "rgba(243,243,243,0.15)";
-          box.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.644)";
-        });
+      body.style.backgroundColor = "rgba(20, 20, 20, 0.95)";
+      textElements.forEach(el => el.style.color = "white");
+      boxes.forEach(b => {
+        b.style.backgroundColor = "rgba(255,255,255,0.08)";
+        b.style.color = "white";
+        b.style.borderColor = "#c9b200";
       });
-      themeBtn.textContent = "Light Mode";
     } else {
+      currentTheme = 'light';
       body.style.backgroundImage = "url('assets/lightbg.jpg')";
       body.style.backgroundColor = "rgba(255, 242, 61, 0.911)";
-      boxes.forEach(box => {
-        box.addEventListener("mouseenter", () => {
-          box.style.backgroundColor = "#f2f53b";
-          box.style.boxShadow = "0 4px 7px #ffe819";
-        });
-        box.addEventListener("mouseleave", () => {
-          box.style.backgroundColor = "rgba(243,243,243,0.15)";
-          box.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.644)";
-        });
+      textElements.forEach(el => el.style.color = "black");
+      boxes.forEach(b => {
+        b.style.backgroundColor = "rgba(243,243,243,0.15)";
+        b.style.color = "black";
+        b.style.borderColor = "#ffb347";
       });
-      themeBtn.textContent = "Dark Mode";
     }
-
-    setTimeout(() => fade.remove(), 600);
   }
-</script>
-
-
+  </script>
 </body>
 </html>
